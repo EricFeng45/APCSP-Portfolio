@@ -1,0 +1,100 @@
+//Library used: RollingStone: 500 Albums
+
+//Returns rank of the album from the data library
+//return {integer} - Rolling Stone's rank of the album
+function randomRank() {
+  var allAlbums = getColumn("RollingStone: 500 Albums", "Album");
+  var rank = randomNumber(0, allAlbums.length-1);
+  
+  return rank;
+}
+
+//Gets name of selected album based on rank
+//rank {string} - The album's rank
+//return {string} - Name of album
+function albumName(rank) {
+  var allAlbums = getColumn("RollingStone: 500 Albums", "Album");
+  var album = allAlbums[rank - 1];
+  
+  return album;
+}
+
+//Gets cover of the chosen album
+//rank {string} - The album's rank
+//return {string} - URL of the album art
+function albumCover(rank) {
+  var allCoverArt = getColumn("RollingStone: 500 Albums", "Album Art");
+  var cover = allCoverArt[rank - 1];
+  
+  return cover;
+}
+
+//Returns the name of artist who released the album
+//rank {string} - The album's rank
+//return {string} - Name of the artist
+function albumArtist(rank) {
+  var allArtists = getColumn("RollingStone: 500 Albums", "Artist");
+  var artist = allArtists[rank - 1];
+  
+  return artist;
+}
+
+//Returns whether the guess of the user is correct or incorrect
+//rank {string} - The album's rank
+//userguess {string} - Guess of who the artist of the album is
+//return {string} - If the user was right or wrong about who created the selected album
+function evaluateAnswer(rank, userguess) {
+  var answerstatus = "";
+  var precedingAlbums = [];
+  var allAlbums = getColumn("RollingStone: 500 Albums", "Album");
+  var allArtists = getColumn("RollingStone: 500 Albums", "Artist");
+  
+  if (userguess == allArtists[rank - 1]) {
+    answerstatus = albumArtist(rank) + " is correct!";
+    for(var i = rank; i < rank + 5; i++) { 
+      appendItem(precedingAlbums, allAlbums[i]);
+    }
+    console.log("Previous 5 Albums: " + precedingAlbums);
+  } else {
+    answerstatus = "Incorrect!";
+  }
+  
+  return answerstatus; 
+}
+
+
+
+//testing
+/*
+var rank = randomRank();
+var guess; 
+
+console.log("Album: " + albumName(rank) + "\n" + "Cover: " + albumCover(rank) + "\n"+ "Rolling Stone Rank: " + rank + "\n" + "Artist: ???");
+guess = albumArtist(rank); //for testing purposes, can be changed to some random artist
+console.log(evaluateAnswer(rank, guess));
+*/
+
+//ignore :)
+
+var rank = randomRank();
+var guess;
+
+setProperty("albumInfo", "text", "Album: " + albumName(rank) + "\n\n" + "Rolling Stone Rank: " + rank + "\n\n" + "Artist: ???");
+setProperty("albumCover", "image", albumCover(rank));
+
+onEvent("guessButton", "click", function() {
+  guess = getText("guessInput");
+  setProperty("evaluateOutput", "text", evaluateAnswer(rank, guess));
+});
+
+onEvent("newQuestionButton", "click", function() {
+  rank = randomRank();
+  setProperty("albumInfo", "text", "Album: " + albumName(rank) + "\n\n" + "Rolling Stone Rank: " + rank + "\n\n" + "Artist: ???");
+  setProperty("albumCover", "image", albumCover(rank));
+  setProperty("guessInput", "text", "");
+  setProperty("evaluateOutput", "text", "");
+  
+  console.log(albumArtist(rank));
+});
+
+console.log(albumArtist(rank));
