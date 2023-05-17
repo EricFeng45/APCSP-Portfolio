@@ -1,0 +1,90 @@
+//Major US National Parks Finder 
+//Data Libary integrated into code.org. Found at https://www.nps.gov/aboutus/national-park-system.htm.
+
+//app and functionality
+var allLocations = getColumn("US National Parks", "Location");
+var scrollIndex = 0;
+var userState;
+
+onEvent("state_search", "click", function(){
+  userState = getText("state_input");
+  console.log(parkNames(userState));
+  scrollIndex = 0; 
+  updateScreen();
+});
+
+onEvent("backButton", "click", function(){
+  if(scrollIndex > 0){
+    scrollIndex = scrollIndex - 1; 
+    updateScreen();
+  }
+});
+onEvent("forwardButton", "click", function(){
+  if(scrollIndex < parkNames(userState).length - 1) {
+    scrollIndex = scrollIndex + 1; 
+    updateScreen();
+  }
+});
+  
+function updateScreen(){
+  var currentPark = parkNames(userState)[scrollIndex];
+  var currentFounding = parkFoundings(userState)[scrollIndex];
+  var currentDesc = parkDescs(userState)[scrollIndex];
+  var currentImage = parkImages(userState)[scrollIndex];
+  
+  if(parkNames(userState).length == 0){
+    currentPark = "???";
+    currentFounding = "???";
+    currentDesc = "???";
+    currentImage = "image.png";
+  }
+
+  setProperty("info_output", "text", "National Park - " + currentPark + "\n\n Establish Date - " + currentFounding + "\n\n" + "Description - " + "\n" + currentDesc);
+  setProperty("park_images", "image", currentImage);
+}
+
+//finding national park information from library database
+function parkNames(userState){
+  var allNames = getColumn("US National Parks", "Name");
+  var filterNames = [];
+  for(var i = 1; i <= 62; i++){
+    if(userState == allLocations[i]){
+      appendItem(filterNames, allNames[i]);
+    }
+  }
+  return filterNames; 
+}
+
+function parkFoundings(userState){
+  var allFoundings = getColumn("US National Parks", "Date established");
+  var filterFoundings = [];
+  for(var i = 1; i <= 62; i++){
+    if(userState == allLocations[i]){
+      appendItem(filterFoundings, allFoundings[i]);
+    }
+  }
+  return filterFoundings;
+}
+
+function parkDescs(userState){
+  var allDescs = getColumn("US National Parks", "Description");
+  var filterDescs = [];
+  for(var i = 1; i <= 62; i++){
+    if(userState == allLocations[i]){
+      appendItem(filterDescs, allDescs[i]);
+    }
+  }
+  return filterDescs;
+}
+
+function parkImages(userState){
+  var allImages = getColumn("US National Parks", "Image");
+  var filterImages = [];
+  for(var i = 1; i <= 62; i++){
+    if(userState == allLocations[i]){
+      appendItem(filterImages, allImages[i]);
+    }
+  }
+  console.log(filterImages);
+  return filterImages;
+}
